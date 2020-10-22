@@ -13,6 +13,32 @@ import Login from "./login";
 jest.mock("axios");
 
 const defaultConfig = getConfig("default");
+const links = [
+  {
+    text: {en: "facebook"},
+    icon: null,
+    url: "facebook/",
+  },
+  {
+    text: {en: "google"},
+    icon: null,
+    url: "google/",
+    authenticated: false,
+  },
+  {
+    text: {en: "twitter"},
+    icon: null,
+    url: "twitter/",
+    authenticated: true,
+  },
+];
+const getLinkText = (wrapper, text) => {
+  const texts = [];
+  wrapper.find(text).forEach( node => {
+    texts.push(node.text());
+  });
+  return texts;
+};
 const createTestProps = props => {
   return {
     language: "en",
@@ -61,6 +87,26 @@ describe("<Login /> rendering", () => {
     const renderer = new ShallowRenderer();
     const component = renderer.render(<Login {...props} />);
     expect(component).toMatchSnapshot();
+  });
+  it("should render without authenticated link when not authenticated", () => {
+    props = createTestProps();
+    props.loginForm.social_login.links = links;
+    props.isAuthenticated = false;
+    const wrapper = shallow(<Login {...props} />);
+    const linkText = getLinkText(wrapper, ".owisp-login-social-link-text");
+    expect(linkText).toContain("facebook");
+    expect(linkText).toContain("google");
+    expect(linkText).not.toContain("twitter");
+  });
+  it("should render with authenticated link when authenticated", () => {
+    props = createTestProps();
+    props.loginForm.social_login.links = links;
+    props.isAuthenticated = true;
+    const wrapper = shallow(<Login {...props} />);
+    const linkText = getLinkText(wrapper, ".owisp-login-social-link-text");
+    expect(linkText).toContain("facebook");
+    expect(linkText).not.toContain("google");
+    expect(linkText).toContain("twitter");
   });
 });
 

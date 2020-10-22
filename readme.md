@@ -18,6 +18,7 @@ Openwisp wifi login pages app to allow users to authenticate, sign up and know m
 - [Prerequisites](#prerequisites)
 - [Install](#install)
 - [Usage](#usage)
+- [Settings](#settings)
 - [License](#license)
 
 ### Prerequisites
@@ -137,6 +138,34 @@ PS> $env:CLIENT = 4000; $env:SERVER = 5000; npm run client
 Note that you need to tell the client the server's port
 (unless you're using the default server port, which is 3030)
 so the client knows where he can find the server.
+
+### Settings
+
+#### authenticated
+
+This setting is used to specify which link(s) should be visible to all users
+or only to authenticated users or to unauthenticated users.
+Let's consider the `Footer` configuration below;
+
+```
+footer:
+    links:
+    - text:
+        en: "link-1"
+        url: "https://link-1.com"
+    - text:
+        en: "link-2"
+        url: "https://link-2.com"
+        authenticated: false
+    - text:
+        en: "link-3"
+        url: "https://link-3.com"
+        authenticated: true
+```
+
+with the settings above, link-1 will be visible to all users while link-3 visible
+to only authenticated users and link-2 will be visible to users who are not yet
+authenticated.
 
 ### License
 

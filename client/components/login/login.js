@@ -106,6 +106,7 @@ export default class Login extends React.Component {
       termsAndConditions,
       privacyPolicy,
       match,
+      isAuthenticated
     } = this.props;
     const {
       links,
@@ -125,35 +126,38 @@ export default class Login extends React.Component {
                     <>
                       <div className="owisp-login-social-links-div">
                         {social_login.links.map(link => {
-                          if (link.url)
-                            return (
-                              <a
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="owisp-login-social-link owisp-btn-primary"
-                                key={link.url}
-                              >
-                                <div>
-                                  {link.icon ? (
-                                    <img
-                                      src={getAssetPath(orgSlug, link.icon)}
-                                      alt={
-                                        link.text
-                                          ? getText(link.text, language)
-                                          : link.url
-                                      }
-                                      className="owisp-login-social-link-icon"
-                                    />
-                                  ) : null}
-                                  {link.text ? (
-                                    <div className="owisp-login-social-link-text">
-                                      {getText(link.text, language)}
-                                    </div>
-                                  ) : null}
-                                </div>
-                              </a>
-                            );
+                          if (link.authenticated === undefined || link.authenticated === isAuthenticated) {
+                            if (link.url)
+                              return (
+                                <a
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="owisp-login-social-link owisp-btn-primary"
+                                  key={link.url}
+                                >
+                                  <div>
+                                    {link.icon ? (
+                                      <img
+                                        src={getAssetPath(orgSlug, link.icon)}
+                                        alt={
+                                          link.text
+                                            ? getText(link.text, language)
+                                            : link.url
+                                        }
+                                        className="owisp-login-social-link-icon"
+                                      />
+                                    ) : null}
+                                    {link.text ? (
+                                      <div className="owisp-login-social-link-text">
+                                        {getText(link.text, language)}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                </a>
+                              );
+                            return null;
+                          }
                           return null;
                         })}
                       </div>
@@ -350,6 +354,9 @@ export default class Login extends React.Component {
 }
 
 Login.contextType = LoadingContext;
+Login.defaultProps = {
+  isAuthenticated: false
+};
 Login.propTypes = {
   loginForm: PropTypes.shape({
     social_login: PropTypes.shape({
@@ -392,4 +399,5 @@ Login.propTypes = {
     content: PropTypes.object,
   }).isRequired,
   authenticate: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool,
 };

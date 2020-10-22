@@ -199,6 +199,7 @@ export default class Status extends React.Component {
       orgSlug,
       captivePortalLoginForm,
       captivePortalLogoutForm,
+      isAuthenticated,
     } = this.props;
     const {content, links, buttons} = statusPage;
     const {username, password, sessions} = this.state;
@@ -218,15 +219,20 @@ export default class Status extends React.Component {
                 return null;
               })}
               {links
-                ? links.map(link => (
-                    <Link
-                      className="owisp-status-link"
-                      key={link.url}
-                      to={link.url.replace("{orgSlug}", orgSlug)}
-                    >
-                      {getText(link.text, language)}
-                    </Link>
-                  ))
+                ? links.map(link => {
+                  if (link.authenticated === undefined || link.authenticated === isAuthenticated) {
+                    return (
+                      <Link
+                        className="owisp-status-link"
+                        key={link.url}
+                        to={link.url.replace("{orgSlug}", orgSlug)}
+                      >
+                        {getText(link.text, language)}
+                      </Link>
+                    );
+                  }
+                  return null;
+                })
                 : null}
               {buttons.logout ? (
                 <>
@@ -345,7 +351,9 @@ export default class Status extends React.Component {
   }
 }
 Status.contextType = LoadingContext;
-
+Status.defaultProps = {
+  isAuthenticated: false
+};
 Status.propTypes = {
   statusPage: PropTypes.shape({
     content: PropTypes.object,
@@ -384,4 +392,5 @@ Status.propTypes = {
   location: PropTypes.shape({
     search: PropTypes.string,
   }).isRequired,
+  isAuthenticated: PropTypes.bool,
 };
